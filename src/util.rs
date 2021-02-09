@@ -5,7 +5,7 @@ use std::num::ParseIntError;
 use std::time::Duration;
 
 pub enum DataUnit {
-    Byte(f64),
+    Byte(u64),
     KiB(f64),
     MiB(f64),
     GiB(f64),
@@ -19,24 +19,24 @@ pub fn humanize(v: DataUnit, width: usize, precision: usize) -> String {
     use DataUnit::*;
     match v {
         Byte(value) => {
-            if value < 1000_f64 {
-                format_value(value, "B", width, precision)
+            if value < 1000 {
+                format_value(value as f64, "B", width, precision)
             } else {
-                humanize(KiB(value / 1023_f64), width, precision)
+                humanize(KiB(value as f64 / 1024_f64), width, precision)
             }
         }
         KiB(value) => {
             if value < 1000_f64 {
                 format_value(value, "K", width, precision)
             } else {
-                humanize(MiB(value / 1023_f64), width, precision)
+                humanize(MiB(value / 1024_f64), width, precision)
             }
         }
         MiB(value) => {
             if value < 1000_f64 {
                 format_value(value, "M", width, precision)
             } else {
-                humanize(GiB(value / 1023_f64), width, precision)
+                humanize(GiB(value / 1024_f64), width, precision)
             }
         }
         GiB(value) => format_value(value, "G", width, precision),
