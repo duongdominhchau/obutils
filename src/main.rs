@@ -79,7 +79,7 @@ fn show_network_io(interface: &str) {
     loop {
         let current = network::get_network_io(interface);
         println!(
-            "⬇️{}/s ⬆️{}/s",
+            "⬇️ {}/s ⬆️ {}/s",
             humanize(Byte(current.received - old.received), 5, 1).trim(),
             humanize(Byte(current.sent - old.sent), 5, 1).trim()
         );
