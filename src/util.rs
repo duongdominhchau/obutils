@@ -11,35 +11,43 @@ pub enum DataUnit {
     GiB(f64),
 }
 
-fn format_value(value: f64, unit: &str, width: usize, precision: usize) -> String {
-    format!("{0:2$.3$}{1}", value, unit, width, precision)
+fn format_value(value: f64, unit: &str, precision: usize) -> String {
+    let width = if precision == 0 {
+        3
+    } else {
+        // One for the decimal point
+        3 + 1 + precision
+    };
+    let number = format!("{:1$.2$}", value, width, precision);
+    let number = number.strip_suffix(".0").unwrap_or_else(|| number.as_str());
+    format!("{} {}", number, unit)
 }
 
-pub fn humanize(v: DataUnit, width: usize, precision: usize) -> String {
+pub fn humanize(v: DataUnit, precision: usize) -> String {
     use DataUnit::*;
     match v {
         Byte(value) => {
             if value < 1000 {
-                format_value(value as f64, "B", width, precision)
+                format_value(value as f64, "B", precision)
             } else {
-                humanize(KiB(value as f64 / 1024_f64), width, precision)
+                humanize(KiB(value as f64 / 1024_f64), precision)
             }
         }
         KiB(value) => {
             if value < 1000_f64 {
-                format_value(value, "K", width, precision)
+                format_value(value, "K", precision)
             } else {
-                humanize(MiB(value / 1024_f64), width, precision)
+                humanize(MiB(value / 1024_f64), precision)
             }
         }
         MiB(value) => {
             if value < 1000_f64 {
-                format_value(value, "M", width, precision)
+                format_value(value, "M", precision)
             } else {
-                humanize(GiB(value / 1024_f64), width, precision)
+                humanize(GiB(value / 1024_f64), precision)
             }
         }
-        GiB(value) => format_value(value, "G", width, precision),
+        GiB(value) => format_value(value, "G", precision),
     }
 }
 

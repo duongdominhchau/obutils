@@ -16,8 +16,8 @@ fn show_ram_usage() {
     let percent = current as f64 * 100_f64 / info.total as f64;
     println!(
         "{}/{} ({:.0}%)",
-        humanize(KiB(current as f64), 5, 1).trim(),
-        humanize(KiB(info.total as f64), 5, 1).trim(),
+        humanize(KiB(current as f64), 1).trim(),
+        humanize(KiB(info.total as f64), 1).trim(),
         percent
     );
 }
@@ -28,8 +28,8 @@ fn show_swap_usage() {
     let percent = current as f64 * 100f64 / info.total as f64;
     println!(
         "{}/{} ({:.0}%)",
-        humanize(KiB(current as f64), 5, 1).trim(),
-        humanize(KiB(info.total as f64), 5, 1).trim(),
+        humanize(KiB(current as f64), 1).trim(),
+        humanize(KiB(info.total as f64), 1).trim(),
         percent
     );
 }
@@ -80,8 +80,8 @@ fn show_network_io(interface: &str) {
         let current = network::get_network_io(interface);
         println!(
             "⬇️ {}/s ⬆️ {}/s",
-            humanize(Byte(current.received - old.received), 5, 1).trim(),
-            humanize(Byte(current.sent - old.sent), 5, 1).trim()
+            humanize(Byte(current.received - old.received), 1),
+            humanize(Byte(current.sent - old.sent), 1)
         );
         util::flush_and_sleep(Duration::from_secs(1));
         old = current;
@@ -94,8 +94,8 @@ fn show_disk_io() {
         let current = disk::get_disk_io();
         println!(
             "➡️ {}/s ⬅️ {}/s",
-            humanize(Byte(current.read - old.read), 5, 1),
-            humanize(Byte(current.write - old.write), 5, 1)
+            humanize(Byte(current.read - old.read), 1),
+            humanize(Byte(current.write - old.write), 1)
         );
         old = current;
         util::flush_and_sleep(Duration::from_secs(1));
