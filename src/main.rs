@@ -1,49 +1,12 @@
-use std::io::Write;
 use std::time::Duration;
 
+use util::{humanize, DataUnit};
+
 mod battery;
+mod brightness;
 mod cpu;
 mod memory;
 mod util;
-
-enum DataUnit {
-    Byte(f64),
-    KiB(f64),
-    MiB(f64),
-    GiB(f64),
-}
-
-fn format_value(value: f64, unit: &str, width: usize, precision: usize) -> String {
-    format!("{0:2$.3$}{1}", value, unit, width, precision)
-}
-
-fn humanize(v: DataUnit, width: usize, precision: usize) -> String {
-    use crate::DataUnit::*;
-    match v {
-        Byte(value) => {
-            if value < 1000_f64 {
-                format_value(value, "B", width, precision)
-            } else {
-                humanize(KiB(value / 1024_f64), width, precision)
-            }
-        }
-        KiB(value) => {
-            if value < 1000_f64 {
-                format_value(value, "K", width, precision)
-            } else {
-                humanize(MiB(value / 1024_f64), width, precision)
-            }
-        }
-        MiB(value) => {
-            if value < 1000_f64 {
-                format_value(value, "M", width, precision)
-            } else {
-                humanize(GiB(value / 1024_f64), width, precision)
-            }
-        }
-        GiB(value) => format_value(value, "G", width, precision),
-    }
-}
 
 fn show_ram_usage() {
     use crate::DataUnit::KiB;
@@ -79,9 +42,21 @@ fn show_battery_info() {
     println!("{}{:3.0}% ({:2.0}% wear)", icon, percent, wear);
 }
 
-// fn show_brightness_temperature_volume() {
-//     loop {}
-// }
+fn show_brightness() {
+    loop {
+        let brightness = brightness::get_brightness();
+        let icon = match brightness {
+            0..=19 => "🌑",
+            20..=39 => "🌘",
+            40..=59 => "🌗",
+            60..=79 => "🌖",
+            80..=100 => "🌕",
+            _ => panic!("Invalid brightness value"),
+        };
+        println!("{} {}%", icon, brightness);
+        util::flush_and_sleep(Duration::from_secs(1));
+    }
+}
 
 fn show_cpu_usage() {
     let mut old = cpu::get_cpu_usage();
@@ -95,8 +70,7 @@ fn show_cpu_usage() {
             println!("{:2.0}%", usage);
         }
         old = current;
-        std::io::stdout().flush().expect("Flush stdout");
-        std::thread::sleep(Duration::from_secs(1));
+        util::flush_and_sleep(Duration::from_secs(1));
     }
 }
 
@@ -105,8 +79,12 @@ fn main() {
         "ram" => show_ram_usage(),
         "swap" => show_swap_usage(),
         "battery" => show_battery_info(),
-        // "brightness-temperature-volume" => show_brightness_temperature_volume(),
+        "brightness" => show_brightness(),
+        // "temperature" => show_temperature(),
+        // "volume" => show_volume(),
         "cpu" => show_cpu_usage(),
+        // "network" => show_network_io(),
+        // "disk" => show_disk_io(),
         _ => {}
     }
 }
