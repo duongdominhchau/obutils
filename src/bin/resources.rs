@@ -10,6 +10,8 @@ fn main() {
     let interface = get_networks().unwrap().wireless.unwrap();
     let interface = interface.as_str();
 
+    let highlight_color = "foreground='#ff9944'";
+
     let mut old_cpu = get_cpu_usage();
     let mut old_net_io = get_network_io(interface);
     let mut old_disk_io = get_disk_io();
@@ -17,7 +19,7 @@ fn main() {
     loop {
         let clock = SystemTime::now();
 
-        print!("CPU: ");
+        print!("<span {}>CPU:</span> ", highlight_color);
         let cpu = get_cpu_usage();
         // Handle the first iteration to avoid division by zero
         if cpu.total == old_cpu.total {
@@ -30,7 +32,7 @@ fn main() {
         old_cpu = cpu;
         print!(" ");
 
-        print!("RAM: ");
+        print!("<span {}>RAM:</span> ", highlight_color);
         let ram_info = get_ram_usage();
         let ram_current = ram_info.total - ram_info.avail;
         let ram_percent = (ram_current as f64 / ram_info.total as f64 * 100f64).round();
@@ -42,7 +44,7 @@ fn main() {
         );
         print!(" ");
 
-        print!("Swap: ");
+        print!("<span {}>Swap:</span> ", highlight_color);
         let swap_info = get_swap_usage();
         if swap_info.total == 0 {
             print!("N/A");
@@ -60,7 +62,7 @@ fn main() {
 
         match get_wifi_name(interface) {
             Some(name) => {
-                print!("📶{}", name);
+                print!("📶<span {}>{}</span>", highlight_color, name);
                 let net_io = get_network_io(interface);
                 let received_diff = net_io.received - old_net_io.received;
                 let sent_diff = net_io.sent - old_net_io.sent;
@@ -75,7 +77,10 @@ fn main() {
         }
         print!(" ");
 
-        print!("🖴");
+        print!(
+            "<span weight='bold' size='x-large' {}>🖴</span> ",
+            highlight_color
+        );
         let disk_io = get_disk_io();
         let read_diff = disk_io.read - old_disk_io.read;
         let write_diff = disk_io.write - old_disk_io.write;
