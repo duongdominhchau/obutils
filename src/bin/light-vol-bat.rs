@@ -1,7 +1,7 @@
 use std::io::{BufRead, BufReader};
 use std::process::{Command, Stdio};
 use std::sync::mpsc::channel;
-use std::thread::spawn;
+use std::thread::{sleep, spawn};
 use std::time::Duration;
 
 use notify::{watcher, RecursiveMode, Watcher};
@@ -76,6 +76,12 @@ fn main() {
                 print_info();
             }
         }
+    });
+
+    // Battery
+    spawn(|| {
+        sleep(Duration::from_secs(60));
+        print_info();
     });
 
     // Brightness
