@@ -1,6 +1,6 @@
 use crate::util::read_lines;
 
-#[derive(Default, Copy, Clone)]
+#[derive(Debug, Default, Copy, Clone)]
 pub struct CpuUsage {
     pub work: u64,
     pub total: u64,

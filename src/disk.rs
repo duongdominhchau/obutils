@@ -2,7 +2,7 @@ use std::fs;
 
 use crate::util;
 
-#[derive(Default, Copy, Clone)]
+#[derive(Debug, Default, Copy, Clone)]
 pub struct DiskIo {
     pub read: u64,
     pub write: u64,

@@ -1,6 +1,6 @@
 use crate::util::read_lines;
 
-#[derive(Default, Copy, Clone)]
+#[derive(Debug, Default, Copy, Clone)]
 pub struct MemInfo {
     pub total: u64,
     pub avail: u64,

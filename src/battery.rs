@@ -1,6 +1,6 @@
 use std::fs;
 
-#[derive(Default, Copy, Clone)]
+#[derive(Debug, Default, Copy, Clone)]
 pub struct BatteryInfo {
     pub now: u64,
     pub full: u64,

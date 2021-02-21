@@ -1,7 +1,7 @@
-use spin_sleep::sleep;
 use std::fs::{self, File};
 use std::io::{BufRead, BufReader, Write};
 use std::num::ParseIntError;
+use std::thread::sleep;
 use std::time::Duration;
 
 pub enum DataUnit {
@@ -20,7 +20,7 @@ fn format_value(value: f64, unit: &str, precision: usize, add_space: bool) -> St
     };
     let number = format!("{:1$.2$}", value, width, precision);
     let number = number.strip_suffix(".0").unwrap_or_else(|| number.as_str());
-    format!("{}{}{}", number, if add_space {" "} else { "" }, unit)
+    format!("{}{}{}", number, if add_space { " " } else { "" }, unit)
 }
 
 pub fn humanize(v: DataUnit, precision: usize, add_space: bool) -> String {
