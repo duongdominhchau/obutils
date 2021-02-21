@@ -11,6 +11,7 @@ fn main() {
     let interface = interface.as_str();
 
     let highlight_color = "foreground='#ff9944'";
+    let separator = "    ";
 
     let mut old_cpu = get_cpu_usage();
     let mut old_net_io = get_network_io(interface);
@@ -30,7 +31,7 @@ fn main() {
             print!("{:3.0}%", (work_diff / total_diff * 100f64).round());
         }
         old_cpu = cpu;
-        print!(" ");
+        print!("{}", separator);
 
         print!("<span {}>RAM:</span> ", highlight_color);
         let ram_info = get_ram_usage();
@@ -42,7 +43,7 @@ fn main() {
             humanize(KiB(ram_info.total as f64), 1, false).trim(),
             ram_percent
         );
-        print!(" ");
+        print!("{}", separator);
 
         print!("<span {}>Swap:</span> ", highlight_color);
         let swap_info = get_swap_usage();
@@ -58,7 +59,7 @@ fn main() {
                 swap_percent
             );
         }
-        print!(" ");
+        print!("{}", separator);
 
         match get_wifi_name(interface) {
             Some(name) => {
@@ -75,7 +76,7 @@ fn main() {
             }
             None => print!("❌ No wireless network"),
         }
-        print!(" ");
+        print!("{}", separator);
 
         print!(
             "<span weight='bold' size='x-large' {}>🖴</span> ",
