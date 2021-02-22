@@ -63,7 +63,7 @@ fn main() {
 
         match get_wifi_name(interface) {
             Some(name) => {
-                print!("📶<span {}>{}</span>", highlight_color, name);
+                print!("📶<span {}>{}</span> ", highlight_color, name);
                 let net_io = get_network_io(interface);
                 let received_diff = net_io.received - old_net_io.received;
                 let sent_diff = net_io.sent - old_net_io.sent;
