@@ -11,43 +11,45 @@ pub enum DataUnit {
     GiB(f64),
 }
 
-fn format_value(value: f64, unit: &str, precision: usize, add_space: bool) -> String {
-    let width = if precision == 0 {
-        3
+fn format_value(value: f64, unit: &str, add_space: bool) -> String {
+    let number_str = if value < 100f64 {
+        // `xx.x` is short enough for one digit after the decimal point
+        format!("{:4.1}", value)
     } else {
-        // One for the decimal point
-        3 + 1 + precision
+        // `xxx` or `xxxx`, too long to add the decimal point
+        format!("{:4.0}", value)
     };
-    let number = format!("{:1$.2$}", value, width, precision);
-    let number = number.strip_suffix(".0").unwrap_or_else(|| number.as_str());
+    let number = number_str
+        .strip_suffix(".0")
+        .unwrap_or_else(|| number_str.as_str());
     format!("{}{}{}", number, if add_space { " " } else { "" }, unit)
 }
 
-pub fn humanize(v: DataUnit, precision: usize, add_space: bool) -> String {
+pub fn humanize(v: DataUnit, add_space: bool) -> String {
     use DataUnit::*;
     match v {
         Byte(value) => {
             if value < 1000 {
-                format_value(value as f64, "B", precision, add_space)
+                format_value(value as f64, "B", add_space)
             } else {
-                humanize(KiB(value as f64 / 1024_f64), precision, add_space)
+                humanize(KiB(value as f64 / 1024_f64), add_space)
             }
         }
         KiB(value) => {
             if value < 1000_f64 {
-                format_value(value, "K", precision, add_space)
+                format_value(value, "K", add_space)
             } else {
-                humanize(MiB(value / 1024_f64), precision, add_space)
+                humanize(MiB(value / 1024_f64), add_space)
             }
         }
         MiB(value) => {
             if value < 1000_f64 {
-                format_value(value, "M", precision, add_space)
+                format_value(value, "M", add_space)
             } else {
-                humanize(GiB(value / 1024_f64), precision, add_space)
+                humanize(GiB(value / 1024_f64), add_space)
             }
         }
-        GiB(value) => format_value(value, "G", precision, add_space),
+        GiB(value) => format_value(value, "G", add_space),
     }
 }
 

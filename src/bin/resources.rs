@@ -11,7 +11,7 @@ fn main() {
     let interface = interface.as_str();
 
     let highlight_color = "foreground='#ff9944'";
-    let separator = "    ";
+    let separator = "  ";
 
     let mut old_cpu = get_cpu_usage();
     let mut old_net_io = get_network_io(interface);
@@ -39,8 +39,8 @@ fn main() {
         let ram_percent = (ram_current as f64 / ram_info.total as f64 * 100f64).round();
         print!(
             "{}/{} ({:.0}%)",
-            humanize(KiB(ram_current as f64), 1, false).trim(),
-            humanize(KiB(ram_info.total as f64), 1, false).trim(),
+            humanize(KiB(ram_current as f64), false).trim(),
+            humanize(KiB(ram_info.total as f64), false).trim(),
             ram_percent
         );
         print!("{}", separator);
@@ -54,8 +54,8 @@ fn main() {
             let swap_percent = (swap_current as f64 / swap_info.total as f64 * 100f64).round();
             print!(
                 "{}/{} ({:.0}%)",
-                humanize(KiB(swap_current as f64), 1, false).trim(),
-                humanize(KiB(swap_info.total as f64), 1, false).trim(),
+                humanize(KiB(swap_current as f64), false).trim(),
+                humanize(KiB(swap_info.total as f64), false).trim(),
                 swap_percent
             );
         }
@@ -70,8 +70,8 @@ fn main() {
                 old_net_io = net_io;
                 print!(
                     "⬇️ {}/s ⬆️ {}/s",
-                    humanize(Byte(received_diff), 1, true),
-                    humanize(Byte(sent_diff), 1, true)
+                    humanize(Byte(received_diff), true),
+                    humanize(Byte(sent_diff), true)
                 );
             }
             None => print!("❌ No wireless network"),
@@ -88,8 +88,8 @@ fn main() {
         old_disk_io = disk_io;
         print!(
             "➡️ {}/s ⬅️ {}/s",
-            humanize(Byte(read_diff), 1, true),
-            humanize(Byte(write_diff), 1, true)
+            humanize(Byte(read_diff), true),
+            humanize(Byte(write_diff), true)
         );
 
         println!();
