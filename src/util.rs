@@ -12,12 +12,10 @@ pub enum DataUnit {
 }
 
 fn format_value(value: f64, unit: &str, add_space: bool) -> String {
-    let number_str = if value < 100f64 {
-        // `xx.x` is short enough for one digit after the decimal point
-        format!("{:4.1}", value)
+    let number_str = if value < 10f64 {
+        format!("{:3.1}", value)
     } else {
-        // `xxx` or `xxxx`, too long to add the decimal point
-        format!("{:4.0}", value)
+        format!("{:3.0}", value)
     };
     let number = number_str
         .strip_suffix(".0")
