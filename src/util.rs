@@ -11,16 +11,17 @@ pub enum DataUnit {
     GiB(f64),
 }
 
+fn is_integral(value: f64) -> bool {
+    (value.trunc() - value).abs() < 1e8
+}
+
 fn format_value(value: f64, unit: &str, add_space: bool) -> String {
-    let number_str = if value < 10f64 {
-        format!("{:3.1}", value)
-    } else {
+    let value_str = if value > 10f64 || is_integral(value) {
         format!("{:3.0}", value)
+    } else {
+        format!("{:3.1}", value)
     };
-    let number = number_str
-        .strip_suffix(".0")
-        .unwrap_or_else(|| number_str.as_str());
-    format!("{}{}{}", number, if add_space { " " } else { "" }, unit)
+    format!("{}{}{}", value_str, if add_space { " " } else { "" }, unit)
 }
 
 pub fn humanize(v: DataUnit, add_space: bool) -> String {
