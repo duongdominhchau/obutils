@@ -1,8 +1,60 @@
+use std::fmt;
+use std::fmt::{Alignment, Display, Formatter};
 use std::fs::{self, File};
 use std::io::{BufRead, BufReader, Write};
 use std::num::ParseIntError;
+use std::ops::DerefMut;
 use std::thread::sleep;
 use std::time::Duration;
+
+#[derive(Default, Debug, Copy, Clone)]
+pub struct Percent {
+    pub value: f64,
+}
+
+impl Percent {
+    /// Construct a percentage by dividing two arguments provided
+    pub fn from(part: f64, total: f64) -> Self {
+        Percent {
+            value: part / total,
+        }
+    }
+    /// Construct a percentage from a float value in the range 0..=1
+    pub fn from_normalized(percent: f64) -> Self {
+        Percent { value: percent }
+    }
+    /// Reverse the percentage, e.g: 80% become 20%
+    pub fn inverse(&self) -> Self {
+        Percent {
+            value: 1.0 - self.value,
+        }
+    }
+}
+
+impl Display for Percent {
+    /// Can use formatter specifiers, they will be applied on the value only,
+    /// the percent sign is not counted. Thus, when calculating the output
+    /// length, remember to add 1 for the percent sign.
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        let value = self.value * 100.0;
+        let formatted_number = match f.precision() {
+            Some(precision) => format!("{:.p$}", value, p = precision),
+            None => format!("{}", value),
+        };
+        Display::fmt(&formatted_number, f)
+    }
+}
+
+#[test]
+fn test_display_percent() {
+    let a = Percent::from_normalized(0.123);
+    assert_eq!("12.3%", a.to_string());
+}
+#[test]
+fn test_display_percent_with_precision() {
+    let a = Percent::from_normalized(0.12345);
+    assert_eq!("12.3%", format!("{:0<6.1}x", a));
+}
 
 #[derive(Debug)]
 pub enum DataUnit {

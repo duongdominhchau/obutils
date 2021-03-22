@@ -9,6 +9,7 @@ use notify::{watcher, RecursiveMode, Watcher};
 use tint2_bars::battery::get_battery_info;
 use tint2_bars::brightness::get_brightness;
 use tint2_bars::pulseaudio::get_sink_state;
+use tint2_bars::util::Percent;
 
 fn show_brightness() {
     let brightness = get_brightness();
@@ -39,10 +40,10 @@ fn show_volume() {
 
 fn show_battery() {
     let info = get_battery_info();
-    let percent = info.now as f64 / info.full as f64 * 100f64;
-    let wear = (1f64 - info.full as f64 / info.full_design as f64) * 100f64;
+    let remaining = Percent::from(info.now as f64, info.full as f64);
+    let wear_out = Percent::from(info.full as f64, info.full_design as f64).inverse();
     let icon = if info.charging { '🔌' } else { '🔋' };
-    print!("{}{:3.0}% ({:2.0}% wear)", icon, percent, wear);
+    print!("{}{:3.0} ({:2.0} wear)", icon, remaining, wear_out);
 }
 
 fn print_info() {
