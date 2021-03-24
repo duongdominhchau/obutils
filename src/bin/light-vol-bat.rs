@@ -40,10 +40,10 @@ fn show_volume() {
 
 fn show_battery() {
     let info = get_battery_info();
-    let remaining = Percent::from(info.now as f64, info.full as f64);
-    let wear_out = Percent::from(info.full as f64, info.full_design as f64).inverse();
+    let remaining = info.now as f64 / info.full as f64 * 100.0;
+    let wear_out =  (1.0 - (info.full as f64 / info.full_design as f64)) * 100.0;
     let icon = if info.charging { '🔌' } else { '🔋' };
-    print!("{}{:3.0} ({:2.0} wear)", icon, remaining, wear_out);
+    print!("{}{:3.0}% ({:2.0}% wear)", icon, remaining, wear_out);
 }
 
 fn print_info() {
