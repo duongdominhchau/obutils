@@ -37,7 +37,7 @@ fn leds_state(id: u8) -> String {
 
 fn fetch(id: u8, proxy: &FcitxProxy, imlist: &[InputMethod], mode: Mode) -> String {
     match mode {
-        Mode::Both => format!("{}{}", fcitx_im(&proxy, &imlist), leds_state(id)),
+        Mode::Both => format!("{} {}", fcitx_im(&proxy, &imlist), leds_state(id)),
         Mode::Fcitx => format!("{}", fcitx_im(&proxy, &imlist)),
         Mode::Leds => format!("{}", leds_state(id)),
     }
