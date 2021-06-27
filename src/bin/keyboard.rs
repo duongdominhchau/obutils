@@ -90,6 +90,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             println!("{}", now);
             old = now;
         }
-        flush_and_sleep(Duration::from_millis(100));
+        flush_and_sleep(Duration::from_millis(50));
     }
 }
