@@ -7,7 +7,6 @@ pub struct CpuUsage {
 }
 
 pub fn get_cpu_usage() -> CpuUsage {
-    // let f = BufReader::new(File::open("/proc/stat").expect("Open /proc/stat"));
     for line in read_lines("/proc/stat") {
         let parts: Vec<&str> = line.split_whitespace().collect();
         if parts[0] == "cpu" {

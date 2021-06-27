@@ -1,9 +1,7 @@
-use std::fmt;
-use std::fmt::{Alignment, Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 use std::fs::{self, File};
 use std::io::{BufRead, BufReader, Write};
 use std::num::ParseIntError;
-use std::ops::DerefMut;
 use std::thread::sleep;
 use std::time::Duration;
 

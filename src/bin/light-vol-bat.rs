@@ -1,15 +1,13 @@
+use notify::{watcher, RecursiveMode, Watcher};
 use std::io::{BufRead, BufReader};
 use std::process::{Command, Stdio};
 use std::sync::mpsc::channel;
 use std::thread::{sleep, spawn};
 use std::time::Duration;
 
-use notify::{watcher, RecursiveMode, Watcher};
-
 use tint2_bars::battery::get_battery_info;
 use tint2_bars::brightness::get_brightness;
 use tint2_bars::pulseaudio::get_sink_state;
-use tint2_bars::util::Percent;
 
 fn show_brightness() {
     let brightness = get_brightness();
@@ -41,7 +39,7 @@ fn show_volume() {
 fn show_battery() {
     let info = get_battery_info();
     let remaining = (info.now as f64 / info.full as f64 * 100.0).clamp(0.0, 100.0);
-    let wear_out =  (1.0 - (info.full as f64 / info.full_design as f64)) * 100.0;
+    let wear_out = (1.0 - (info.full as f64 / info.full_design as f64)) * 100.0;
     let icon = if info.charging { '🔌' } else { '🔋' };
     print!("{}{:3.0}% ({:2.0}% wear)", icon, remaining, wear_out);
 }

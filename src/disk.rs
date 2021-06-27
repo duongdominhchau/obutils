@@ -34,20 +34,20 @@ pub fn get_disk_io() -> DiskIo {
             .nth(DEVICE_NAME)
             .expect("Get device name from disk stats");
         if drives.contains(&device_name.to_string()) {
-            read += line
-                .split_whitespace()
-                .nth(READ_SECTORS)
-                .expect("Get read sectors from disk stats")
-                .parse::<usize>()
-                .unwrap()
-                * SECTOR_SIZE;
-            write += line
-                .split_whitespace()
-                .nth(WRITE_SECTORS)
-                .expect("Get write sectors from disk stats")
-                .parse::<usize>()
-                .unwrap()
-                * SECTOR_SIZE;
+            read += SECTOR_SIZE
+                * line
+                    .split_whitespace()
+                    .nth(READ_SECTORS)
+                    .expect("Get read sectors from disk stats")
+                    .parse::<usize>()
+                    .unwrap();
+            write += SECTOR_SIZE
+                * line
+                    .split_whitespace()
+                    .nth(WRITE_SECTORS)
+                    .expect("Get write sectors from disk stats")
+                    .parse::<usize>()
+                    .unwrap();
         }
     }
     DiskIo {
