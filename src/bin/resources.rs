@@ -1,10 +1,10 @@
 use std::time::{Duration, SystemTime};
-use tint2_bars::cpu::get_cpu_usage;
-use tint2_bars::disk::get_disk_io;
-use tint2_bars::memory::{get_ram_usage, get_swap_usage};
-use tint2_bars::network::{get_network_io, get_networks, get_wifi_name};
-use tint2_bars::util::DataUnit::{Byte, KiB};
-use tint2_bars::util::{flush_and_sleep, humanize};
+use obutils::cpu::get_cpu_usage;
+use obutils::disk::get_disk_io;
+use obutils::memory::{get_ram_usage, get_swap_usage};
+use obutils::network::{get_network_io, get_networks, get_wifi_name};
+use obutils::util::DataUnit::{Byte, KiB};
+use obutils::util::{flush_and_sleep, humanize};
 
 fn main() {
     let interface = get_networks().unwrap().wireless.unwrap();

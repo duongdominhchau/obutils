@@ -1,7 +1,7 @@
 use std::time::Duration;
-use tint2_bars::fcitx::{FcitxProxy, InputMethod};
-use tint2_bars::keyboard_leds::{get_input_id, get_leds_state};
-use tint2_bars::util::flush_and_sleep;
+use obutils::fcitx::{FcitxProxy, InputMethod};
+use obutils::keyboard_leds::{get_input_id, get_leds_state};
+use obutils::util::flush_and_sleep;
 use zbus::Connection;
 
 #[derive(Debug, Clone, Copy)]

@@ -5,9 +5,9 @@ use std::sync::mpsc::channel;
 use std::thread::{sleep, spawn};
 use std::time::Duration;
 
-use tint2_bars::battery::get_battery_info;
-use tint2_bars::brightness::get_brightness;
-use tint2_bars::pulseaudio::get_sink_state;
+use obutils::battery::get_battery_info;
+use obutils::brightness::get_brightness;
+use obutils::pulseaudio::get_sink_state;
 
 fn show_brightness() {
     let brightness = get_brightness();
