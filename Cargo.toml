@@ -1,5 +1,5 @@
 [package]
-name = "tint2-bars"
+name = "obutils"
 version = "0.1.0"
 authors = ["Duong Do Minh Chau <duongdominhchau@gmail.com>"]
 edition = "2018"
@@ -13,3 +13,5 @@ zbus = { version = "*" }
 serde = { version = "*", features = ["derive"] }
 zvariant = "*"
 thiserror = "*"
+rand = "*"
+walkdir = "*"
