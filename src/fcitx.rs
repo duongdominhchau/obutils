@@ -24,6 +24,16 @@ impl From<(String, String, String, bool)> for InputMethod {
         }
     }
 }
+impl From<(String, String, String, String, String, String, bool)> for InputMethod {
+    fn from(tup: (String, String, String, String, String, String, bool)) -> InputMethod {
+        Self {
+            display_name: tup.1,
+            name: tup.0,
+            lang: tup.5,
+            loaded: tup.6,
+        }
+    }
+}
 impl Type for InputMethod {
     fn signature() -> Signature<'static> {
         Signature::try_from("sssb").unwrap()
@@ -40,4 +50,25 @@ pub trait Fcitx {
     fn current_im(&self) -> zbus::Result<String>;
     #[dbus_proxy(property, name = "IMList")]
     fn imlist(&self) -> zbus::Result<Vec<(String, String, String, bool)>>;
+}
+
+#[dbus_proxy(
+    interface = "org.fcitx.Fcitx.Controller1",
+    default_service = "org.fcitx.Fcitx5",
+    default_path = "/controller"
+)]
+pub trait Fcitx5Controller {
+    #[dbus_proxy(name = "CurrentInputMethod")]
+    fn current_input_method(&self) -> zbus::Result<String>;
+    #[dbus_proxy(name = "CurrentInputMethodGroup")]
+    fn current_input_method_group(&self) -> zbus::Result<String>;
+    #[dbus_proxy(name = "AvailableInputMethods")]
+    fn input_methods(
+        &self,
+    ) -> zbus::Result<Vec<(String, String, String, String, String, String, bool)>>;
+    #[dbus_proxy(name = "InputMethodGroupInfo")]
+    fn input_method_group_info(
+        &self,
+        group_name: &str,
+    ) -> zbus::Result<(String, Vec<(String, String)>)>;
 }

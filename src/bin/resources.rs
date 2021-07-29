@@ -1,10 +1,10 @@
-use std::time::{Duration, SystemTime};
 use obutils::cpu::get_cpu_usage;
 use obutils::disk::get_disk_io;
 use obutils::memory::{get_ram_usage, get_swap_usage};
 use obutils::network::{get_network_io, get_networks, get_wifi_name};
 use obutils::util::DataUnit::{Byte, KiB};
 use obutils::util::{flush_and_sleep, humanize};
+use std::time::{Duration, SystemTime};
 
 fn main() {
     let interface = get_networks().unwrap().wireless.unwrap();
