@@ -90,28 +90,23 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .collect()
         })
     };
-    let use_fcitx5 = if fcitx_imlist.is_some() {
-        false
+    let (imlist, use_fcitx5) = if fcitx_imlist.is_some() {
+        (fcitx_imlist.unwrap(), false)
     } else if fcitx5_imlist.is_some() {
-        true
+        (fcitx5_imlist.unwrap(), true)
     } else {
         return Err(Box::new(Error::FcitxNotFound));
     };
-    let imlist = if use_fcitx5 {
-        fcitx5_imlist.unwrap()
-    } else {
-        fcitx_imlist.unwrap()
-    };
 
     let do_render = || -> Result<String, zbus::Error> {
-        Ok(if use_fcitx5 {
-            render(keyboard_id, &fcitx5_proxy.current_input_method()?, &imlist)
+        let current_im = &if use_fcitx5 {
+            fcitx5_proxy.current_input_method()?
         } else {
-            render(keyboard_id, &fcitx_proxy.current_im()?, &imlist)
-        })
+            fcitx_proxy.current_im()?
+        };
+        Ok(render(keyboard_id, current_im, &imlist))
     };
-    let mut old = do_render()?;
-    println!("{}", old);
+    let mut old = String::new();
     loop {
         let now = do_render()?;
         if !now.is_empty() && now != old {
