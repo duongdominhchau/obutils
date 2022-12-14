@@ -37,7 +37,7 @@ fn parse_args() -> Result<Arguments, ParseIntError> {
 
 fn load_images(path: &str) -> Result<Vec<String>, walkdir::Error> {
     let mut images = Vec::new();
-    let extensions = [".jpg", ".jpeg", ".png", ".webp", ".bmp"];
+    let extensions = [".jpg", ".jpeg", ".png", ".webp", ".bmp", ".jxl"];
     for entry in WalkDir::new(path) {
         let path = entry?.path().to_str().unwrap().to_string();
         if extensions.iter().any(|ext| path.ends_with(ext)) {
