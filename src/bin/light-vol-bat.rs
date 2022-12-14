@@ -1,5 +1,6 @@
-use notify::{watcher, RecursiveMode, Watcher};
+use notify::{Config, RecommendedWatcher, RecursiveMode, Watcher};
 use std::io::{BufRead, BufReader};
+use std::path::Path;
 use std::process::{Command, Stdio};
 use std::sync::mpsc::channel;
 use std::thread::{sleep, spawn};
@@ -85,10 +86,11 @@ fn main() {
 
     // Brightness
     let (tx, rx) = channel();
-    let mut brightness_watcher = watcher(tx, Duration::from_millis(100)).unwrap();
+    let watcher_config = Config::default().with_poll_interval(Duration::from_millis(100));
+    let mut brightness_watcher = RecommendedWatcher::new(tx, watcher_config).unwrap();
     brightness_watcher
         .watch(
-            "/sys/class/backlight/intel_backlight/brightness",
+            Path::new("/sys/class/backlight/intel_backlight/brightness"),
             RecursiveMode::NonRecursive,
         )
         .unwrap_or_else(|_| volume_watcher.kill().unwrap());

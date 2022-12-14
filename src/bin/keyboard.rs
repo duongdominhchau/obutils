@@ -1,4 +1,4 @@
-use obutils::fcitx::{Fcitx5ControllerProxy, FcitxProxy, InputMethod};
+use obutils::fcitx::{Fcitx5ControllerProxy, InputMethod};
 use obutils::keyboard_leds::{get_input_id, get_leds_state};
 use obutils::util::flush_and_sleep;
 use std::time::Duration;
@@ -8,6 +8,8 @@ use zbus::Connection;
 enum Error {
     #[error("Fcitx/Fcitx5 DBus interface not found")]
     FcitxNotFound,
+    #[error("Zbus error: {0}")]
+    ZbusError(#[from] zbus::Error),
 }
 
 fn highlight(value: &str) -> String {
@@ -39,41 +41,24 @@ fn render(id: u8, current_im: &str, imlist: &[InputMethod]) -> String {
     format!("{} {}", display_name, leds_state(id))
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+#[tokio::main]
+async fn main() -> Result<(), Error> {
     // Polling is bad, but there is no other reliable solution on X11...
     let keyboard_id = get_input_id().expect("Get keyboard ID");
-    let zbus_conn = Connection::new_session()?;
-    let fcitx_proxy = FcitxProxy::new(&zbus_conn)?;
-    let fcitx5_proxy = Fcitx5ControllerProxy::new(&zbus_conn)?;
-
-    let fcitx_imlist: Option<Vec<InputMethod>> = {
-        fcitx_proxy.imlist().ok().map(|list| {
-            list.into_iter()
-                .filter_map(|x| {
-                    let mut im: InputMethod = x.into();
-                    let prefix_to_ignore = "Keyboard - ";
-                    if im.loaded {
-                        if im.display_name.starts_with(prefix_to_ignore) {
-                            im.display_name.drain(..prefix_to_ignore.len());
-                        }
-                        Some(im)
-                    } else {
-                        None
-                    }
-                })
-                .collect()
-        })
-    };
-    let fcitx5_imlist: Option<Vec<InputMethod>> = {
+    let zbus_conn = Connection::session().await.unwrap();
+    let fcitx5_proxy = Fcitx5ControllerProxy::new(&zbus_conn).await.unwrap();
+    let imlist: Vec<InputMethod> = {
         // This doesn't have display name, so we need another call
-        let current_group = fcitx5_proxy.current_input_method_group()?;
+        let current_group = fcitx5_proxy.current_input_method_group().await.unwrap();
         let active_input_methods: Vec<String> = fcitx5_proxy
-            .input_method_group_info(&current_group)?
+            .input_method_group_info(&current_group)
+            .await
+            .unwrap()
             .1
             .into_iter()
             .map(|t| t.0)
             .collect();
-        fcitx5_proxy.input_methods().ok().map(|list| {
+        fcitx5_proxy.input_methods().await.ok().map(|list| {
             list.into_iter()
                 .filter_map(|x| {
                     let mut im: InputMethod = x.into();
@@ -89,26 +74,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 })
                 .collect()
         })
-    };
-    let (imlist, use_fcitx5) = if fcitx_imlist.is_some() {
-        (fcitx_imlist.unwrap(), false)
-    } else if fcitx5_imlist.is_some() {
-        (fcitx5_imlist.unwrap(), true)
-    } else {
-        return Err(Box::new(Error::FcitxNotFound));
-    };
-
-    let do_render = || -> Result<String, zbus::Error> {
-        let current_im = &if use_fcitx5 {
-            fcitx5_proxy.current_input_method()?
-        } else {
-            fcitx_proxy.current_im()?
-        };
-        Ok(render(keyboard_id, current_im, &imlist))
-    };
+    }
+    .ok_or(Error::FcitxNotFound)?;
     let mut old = String::new();
     loop {
-        let now = do_render()?;
+        let current_im = fcitx5_proxy.current_input_method().await?;
+        let now = render(keyboard_id, &current_im, &imlist);
         if !now.is_empty() && now != old {
             println!("{}", now);
             old = now;
