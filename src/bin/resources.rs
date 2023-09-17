@@ -4,7 +4,7 @@ use obutils::memory::{get_ram_usage, get_swap_usage};
 use obutils::network::{get_network_io, get_networks, get_wifi_name};
 use obutils::util::DataUnit::{Byte, KiB};
 use obutils::util::{flush_and_sleep, humanize};
-use std::time::{Duration, Instant, SystemTime};
+use std::time::{Duration, Instant};
 
 fn main() {
     let interface = get_networks().unwrap().wireless.unwrap();
@@ -18,7 +18,6 @@ fn main() {
     let mut old_disk_io = get_disk_io();
 
     loop {
-        let clock = SystemTime::now();
         let now = Instant::now();
 
         print!("<span {}>CPU:</span> ", highlight_color);
