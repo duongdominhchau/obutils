@@ -4,7 +4,7 @@ use obutils::memory::{get_ram_usage, get_swap_usage};
 use obutils::network::{get_network_io, get_networks, get_wifi_name};
 use obutils::util::DataUnit::{Byte, KiB};
 use obutils::util::{flush_and_sleep, humanize};
-use std::time::{Duration, SystemTime};
+use std::time::{Duration, Instant, SystemTime};
 
 fn main() {
     let interface = get_networks().unwrap().wireless.unwrap();
@@ -19,6 +19,7 @@ fn main() {
 
     loop {
         let clock = SystemTime::now();
+        let now = Instant::now();
 
         print!("<span {}>CPU:</span> ", highlight_color);
         let cpu = get_cpu_usage();
@@ -93,6 +94,7 @@ fn main() {
         );
 
         println!();
-        flush_and_sleep(Duration::from_secs(1) - clock.elapsed().unwrap());
+        let next_tick = now.checked_add(Duration::from_secs(1)).unwrap();
+        flush_and_sleep(next_tick.duration_since(now));
     }
 }
