@@ -9,7 +9,7 @@ pub struct BatteryInfo {
 }
 
 fn read_stat(name: &str) -> u64 {
-    fs::read_to_string(format!("/sys/class/power_supply/BAT0/energy_{}", name))
+    fs::read_to_string(format!("/sys/class/power_supply/BAT1/energy_{}", name))
         .unwrap_or_else(|_| panic!("Read `energy_{}`", name))
         .trim()
         .parse()
@@ -21,7 +21,7 @@ pub fn get_battery_info() -> BatteryInfo {
         now: read_stat("now"),
         full: read_stat("full"),
         full_design: read_stat("full_design"),
-        charging: fs::read_to_string("/sys/class/power_supply/AC0/online")
+        charging: fs::read_to_string("/sys/class/power_supply/ACAD/online")
             .expect("Read charging status")
             .trim()
             .eq("1"),

@@ -1,7 +1,7 @@
 use crate::util;
 
 fn path_of(name: &str) -> String {
-    format!("/sys/class/backlight/intel_backlight/{}", name)
+    format!("/sys/class/backlight/amdgpu_bl1/{}", name)
 }
 
 /// Brightness in percent

@@ -90,7 +90,7 @@ fn main() {
     let mut brightness_watcher = RecommendedWatcher::new(tx, watcher_config).unwrap();
     brightness_watcher
         .watch(
-            Path::new("/sys/class/backlight/intel_backlight/brightness"),
+            Path::new("/sys/class/backlight/amdgpu_bl1/brightness"),
             RecursiveMode::NonRecursive,
         )
         .unwrap_or_else(|_| volume_watcher.kill().unwrap());
