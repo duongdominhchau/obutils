@@ -20,7 +20,7 @@ fn main() {
     loop {
         let now = Instant::now();
 
-        print!("<span {}>CPU:</span> ", highlight_color);
+        print!("<span {}>C:</span> ", highlight_color);
         let cpu = get_cpu_usage();
         // Handle the first iteration to avoid division by zero
         if cpu.total == old_cpu.total {
@@ -33,7 +33,7 @@ fn main() {
         old_cpu = cpu;
         print!("{}", separator);
 
-        print!("<span {}>RAM:</span> ", highlight_color);
+        print!("<span {}>M:</span> ", highlight_color);
         let ram_info = get_ram_usage();
         let ram_current = ram_info.total - ram_info.avail;
         let ram_percent = (ram_current as f64 / ram_info.total as f64 * 100f64).round();
@@ -45,7 +45,7 @@ fn main() {
         );
         print!("{}", separator);
 
-        print!("<span {}>Swap:</span> ", highlight_color);
+        print!("<span {}>S:</span> ", highlight_color);
         let swap_info = get_swap_usage();
         if swap_info.total == 0 {
             print!("N/A");
@@ -69,7 +69,7 @@ fn main() {
                 let sent_diff = net_io.sent - old_net_io.sent;
                 old_net_io = net_io;
                 print!(
-                    "⬇️ {}/s ⬆️ {}/s",
+                    "⬇️ {} ⬆️ {}",
                     humanize(Byte(received_diff), true),
                     humanize(Byte(sent_diff), true)
                 );
@@ -87,7 +87,7 @@ fn main() {
         let write_diff = disk_io.write - old_disk_io.write;
         old_disk_io = disk_io;
         print!(
-            "➡️ {}/s ⬅️ {}/s",
+            "➡️ {} ⬅️ {}",
             humanize(Byte(read_diff), true),
             humanize(Byte(write_diff), true)
         );
