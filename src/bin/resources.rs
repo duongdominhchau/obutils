@@ -1,7 +1,7 @@
 use obutils::cpu::get_cpu_usage;
 use obutils::disk::get_disk_io;
 use obutils::memory::{get_ram_usage, get_swap_usage};
-use obutils::network::{get_network_io, get_networks, get_wifi_name};
+use obutils::network::{get_network_io, get_networks};
 use obutils::util::DataUnit::{Byte, KiB};
 use obutils::util::{flush_and_sleep, humanize};
 use std::time::{Duration, Instant};
@@ -61,22 +61,16 @@ fn main() {
         }
         print!("{}", separator);
 
-        match get_wifi_name(interface) {
-            Some(name) => {
-                print!("📶<span {}>{}</span> ", highlight_color, name);
-                let net_io = get_network_io(interface);
-                let received_diff = net_io.received - old_net_io.received;
-                let sent_diff = net_io.sent - old_net_io.sent;
-                old_net_io = net_io;
-                print!(
-                    "⬇️ {} ⬆️ {}",
-                    humanize(Byte(received_diff), true),
-                    humanize(Byte(sent_diff), true)
-                );
-            }
-            None => print!("❌ No wireless network"),
-        }
-        print!("{}", separator);
+        let net_io = get_network_io(interface);
+        let received_diff = net_io.received - old_net_io.received;
+        let sent_diff = net_io.sent - old_net_io.sent;
+        old_net_io = net_io;
+        print!(
+            "📶⬇️ {} ⬆️ {}{}",
+            humanize(Byte(received_diff), true),
+            humanize(Byte(sent_diff), true),
+            separator
+        );
 
         print!(
             "<span weight='bold' size='x-large' {}>🖴</span> ",
